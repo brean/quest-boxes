@@ -1,0 +1,1 @@
+<!-- create new Quest from template, list all templates -->
