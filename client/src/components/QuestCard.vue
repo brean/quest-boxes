@@ -8,7 +8,7 @@
     <v-scroll-y-transition>
       <div
         class="display-1 flex-grow-1 text-center">
-        {{templ.name}}
+        {{templ.titleen}}
       </div>
     </v-scroll-y-transition>
   </v-card>
