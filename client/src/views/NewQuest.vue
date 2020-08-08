@@ -55,9 +55,11 @@
 
 <script>
 import axios from 'axios';
+import router from '../router/index';
 import QuestTemplate from '../components/QuestTemplate.vue';
 const PROTOCOL = window.location.protocol;
 const API_SERVER = `${PROTOCOL}//${window.location.hostname}:3001`;
+
 
 export default {
   props: {
@@ -75,6 +77,8 @@ export default {
         console.log(res);
         if (res.data.ok) {
           // TODO: forward to /quest/name
+          console.log(res.data)
+          router.push({ name: 'QuestEditor', params: { questId: res.data._id }})
         } else {
           // TODO: get text label and highlight error
           alert(res.data.msg);

@@ -5,7 +5,7 @@
       color="indigo"
       dark
     >
-      <v-toolbar-title>Quest</v-toolbar-title>
+      <v-toolbar-title>QuestBoxes</v-toolbar-title>
     </v-app-bar>
 
     <v-main>

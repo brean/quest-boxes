@@ -1,20 +1,26 @@
 <template>
   <v-card
-    :color="active_color"
     class="d-flex align-center"
     height="200"
-    @click="toggle"
+    :to="{name: 'QuestEditor', params: {questId: quest._id}}"
   >
     <v-scroll-y-transition>
       <div
-        class="display-1 flex-grow-1 text-center">
-        {{templ.titleen}}
+        class="flex-grow-1 text-center">
+        <h1>{{quest.name}}</h1>
+        <span>{{quest.template}}</span>
       </div>
     </v-scroll-y-transition>
   </v-card>
 </template>
 <script>
+
 export default {
-  props: ['templ', 'active_color', 'toggle'],
+  props: ['quest'],
+  methods: {
+    clicked: function () {
+      console.log(this.quest)
+    }
+  }
 };
 </script>

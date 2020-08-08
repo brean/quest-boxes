@@ -30,7 +30,7 @@ MongoClient.connect(
         } else {
           questCollection.insertOne(jsonData)
             .then(result => {
-              res.json({ ok: true })
+              res.json({ ok: true, _id: result.insertedId })
             })
         }
       })
@@ -42,19 +42,19 @@ MongoClient.connect(
         res.json(items)
       })
   })
-  app.get('/quest/:qid', (req, res) => {
+  app.get('/quest/:questId', (req, res) => {
     // list all quests
-    const qid = req.params.qid
-    questCollection.findOne({ _id: ObjectId(qid) })
+    const questId = req.params.questId
+    questCollection.findOne({ _id: ObjectId(questId) })
       .then(result => {
         res.json(result)
       })
   })
-  app.post('/quest/:qid', (req, res) => {
+  app.post('/quest/:questId', (req, res) => {
     // store updated quest data
-    const qid = req.params.qid
+    const questId = req.params.questId
     questCollection.findOneAndReplace(
-      { _id: ObjectId(qid) },
+      { _id: ObjectId(questId) },
       req.body)
       .then(result => {
         res.json(result)

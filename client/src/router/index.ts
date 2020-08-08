@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import Overview from '../views/Overview.vue';
 import NewQuest from '../views/NewQuest.vue';
+import QuestEditor from '../views/QuestEditor.vue';
 
 Vue.use(VueRouter);
 
@@ -15,6 +16,12 @@ const routes: Array<RouteConfig> = [
     path: '/new',
     name: 'NewQuest',
     component: NewQuest,
+  },
+  {
+    path: '/editor/:questId',
+    name: 'QuestEditor',
+    props: route => ({ questId: route.params.questId }),
+    component: QuestEditor,
   },
 ];
 
