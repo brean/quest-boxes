@@ -24,13 +24,8 @@ class Graph {
       const edge = this.data.edges[index]
       const add = edge.answer ? `_${edge.answer}` : ''
       const edgeCircleFrom = d3.select('circle#connect_out_'+edge.from+add)
-      console.log(edgeCircleFrom.node())
       const edgeCircleTo = d3.select('circle#connect_in_'+edge.to)
-      console.log(edgeCircleTo.node())
       const path = d3.select('path#edge_'+index);
-      console.log(
-        this.elemPos(edgeCircleFrom),
-        this.elemPos(edgeCircleTo));
       path.attr('d', 
         this.calculatePath(
           this.elemPos(edgeCircleFrom),
