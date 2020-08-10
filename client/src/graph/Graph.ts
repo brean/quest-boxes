@@ -1,12 +1,12 @@
 import * as d3 from 'd3';
 
 class Graph {
-  data: any;
+  _data: any;
   svg: any;
 
 
   data(data: any) {
-    this.data = data;
+    this._data = data;
 
   }
 
@@ -20,8 +20,8 @@ class Graph {
   }
 
   updateEdges() {
-    for (const index in this.data.edges) {
-      const edge = this.data.edges[index]
+    for (const index in this._data.edges) {
+      const edge = this._data.edges[index]
       const add = edge.answer ? `_${edge.answer}` : ''
       const edgeCircleFrom = d3.select('circle#connect_out_'+edge.from+add)
       const edgeCircleTo = d3.select('circle#connect_in_'+edge.to)

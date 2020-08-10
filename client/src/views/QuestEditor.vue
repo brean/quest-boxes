@@ -23,14 +23,15 @@
                   style="left: 2px; top: 2px;"
                   max-width="200px"
                   raised>
-                  <v-select
+                  <!--v-select
                     :items="tasks"
                     v-model="node.task"
                     label="Task type"
                     style="margin: 3px; margin-top: 10px; margin-bottom: 0;"
-                  ></v-select>
+                  ></v-select-->
                   <v-card-title class="card-paddings truncate ignore-pointer">{{node.title}}</v-card-title>
-                  <v-card-subtitle class="card-paddings truncate ignore-pointer">{{node.text}}</v-card-subtitle>
+                  <v-card-subtitle class="card-paddings truncate ignore-pointer">{{node.task}}</v-card-subtitle>
+                  <div class="card-paddings ellipsis ignore-pointer">{{ node.text }}</div>
                   <div v-if="node.task == 'multiple_choice'">
                     <div v-for="(answer, index) in node.answers"
                         :key="answer">
@@ -122,11 +123,21 @@
     text-overflow: ellipsis;
   }
 
+  .ellipsis {
+    display: -moz-box;
+    display: -webkit-box;
+    max-width: 200px;
+    height: 60px; /* Fallback for non-webkit */
+    font-size: 12px;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    margin: 5px;
+    margin-bottom: 10px;
+    overflow: hidden !important;
+  }
+
   .card-paddings {
-    padding-top: 0;
-    padding-bottom: 4px;
-    padding-left: 3px;
-    padding-right: 3px;
+    padding: 5px;
   }
 
   circle.connect {
@@ -199,7 +210,7 @@ export default {
                 id: uuidv4(),
                 title: 'Some Topic',
                 task: 'multiple_choice',
-                text: 'This is a long text with a question',
+                text: 'This is a long text with a question. At least long enough for a line break.',
                 answers: ['Option 1', 'Option 2', 'Option 3, long but correct. Lorem ipsum dolor', 'Wrong but long Option 4'],
                 rightAnswers: [2],
                 x: 100,
@@ -207,9 +218,9 @@ export default {
               },
               {
                 id: uuidv4(),
-                title: 'Other Topic with a very long text',
+                title: 'Other Topic with a very long title.',
                 task: 'multiple_choice',
-                text: 'Lorem ipsum dolor some filler text',
+                text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 answers: ['Option 1', 'Option 2', 'Option 3'],
                 rightAnswers: [1],
                 x: 350,
