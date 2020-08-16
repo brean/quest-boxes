@@ -1,13 +1,15 @@
 import * as d3 from 'd3';
+import Node from './Node';
+import Edge from './Edge';
+import Card from './Card';
 
 class Graph {
   _data: any;
   svg: any;
-
-
+  selected?: Node = undefined;
+  cards: Map< string, Card > = new Map<string, Card>();
   data(data: any) {
     this._data = data;
-
   }
 
   initZoom(svg: any) {
@@ -20,105 +22,79 @@ class Graph {
   }
 
   updateEdges() {
-    for (const index in this._data.edges) {
-      const edge = this._data.edges[index]
-      const add = edge.answer ? `_${edge.answer}` : ''
-      const edgeCircleFrom = d3.select('circle#connect_out_'+edge.from+add)
-      const edgeCircleTo = d3.select('circle#connect_in_'+edge.to)
-      const path = d3.select('path#edge_'+index);
-      path.attr('d', 
-        this.calculatePath(
-          this.elemPos(edgeCircleFrom),
-          this.elemPos(edgeCircleTo)));
+    // TODO: remove old edges (?)
+    for (const edgeData of this._data.edges) {
+      const fromCard = this.cards.get(edgeData.from) as Card;
+      const toCard = this.cards.get(edgeData.to) as Card;
+
+      const add = edgeData.answer ? `_${edgeData.answer}` : ''
+      const from = fromCard.nodes.get('node_out_'+edgeData.from+add) as Node
+      const to = toCard.nodes.get('node_in_'+edgeData.to) as Node
+      const edge = new Edge(edgeData, from, to);
+      if (!fromCard.edges.has(edgeData.id)) {
+        fromCard.edges.set(edgeData.id, edge)
+      }
+      if (!toCard.edges.has(edgeData.id)) {
+        toCard.edges.set(edgeData.id, edge)
+      }
+      edge.drawPath()
     }
-  }
-
-  elemPos(elem: any) {
-    const bbox = elem.node().getBBox();
-    const x = bbox.x + (bbox.width / 2);
-    const y = bbox.y + (bbox.height / 2);
-    const offset = this.svg.node().getBoundingClientRect();
-    const matrix = elem.node().getScreenCTM();
-    return {
-      x: (matrix.a * x) + (matrix.c * y) + matrix.e - offset.left,
-      y: (matrix.b * x) + (matrix.d * y) + matrix.f - offset.top
-    };
-
-  }
-
-  calculatePath(a: {x: number; y: number}, b: {x: number; y: number}) {
-    const diff = {
-      x: b.x - a.x,
-      y: b.y - a.y
-    };
-
-    const path = `M${a.x},${a.y} C` +
-      `${a.x + diff.x / 3 * 2},${a.y} ` +
-      `${a.x + diff.x / 3},${b.y} ` +
-      `${b.x},${b.y}`;
-
-    return path;
   }
 
   updateDrag() {
     // move nodes
     const startPointerPos = {x: 0, y: 0};
     const startTransform = {x: 0, y: 0};
-    let selectedCircle: any = null;
     const svg = this.svg;
-    function dragDrag() {
-      const parent = this.parentElement.parentElement
-      parent.setAttribute('transform',
+    const cards = this.cards;
+    // let selectedCircle: any = null;
+    function dragCard() {
+      const card = this.parentElement.parentElement
+      card.setAttribute('transform',
         'translate(' +
         (startTransform.x + d3.event.sourceEvent.clientX - startPointerPos.x) +
         ', ' + 
         (startTransform.y + d3.event.sourceEvent.clientY - startPointerPos.y) +
         ')');
+      const c = cards.get(card.id) as Card;
+      c.updateEdges();
     }
   
-    function dragStartNode() {
+    function dragStartCard() {
       startPointerPos.x = d3.event.sourceEvent.clientX;
       startPointerPos.y = d3.event.sourceEvent.clientY;
       const transform = this.parentElement.parentElement.getAttribute("transform")
       const split = transform.split(', ')
       startTransform.x = parseInt(split[0].substr(10))
       startTransform.y = parseInt(split[1].split(')')[0])
-      //console.log(d3.event.sourceEvent.target.className)
-      //console.log(d3.event.sourceEvent.target.classList)
     }
 
-    d3.selectAll('.connect')
-      .on('mouseover', function() {
-        this.classList.add('hover')
-      })
-      .on('mouseout', function() {
-        this.classList.remove('hover')
-      })
-      .on('click', function() {
-        const classList = this.classList;
-        if (selectedCircle !== null) {
-          selectedCircle.classList.remove('selected')
-          if (selectedCircle === this || !classList.contains('in')) {
-            selectedCircle = null;
-            return
-          }
-          console.log(this)
-          console.log(selectedCircle)
-          selectedCircle = null;
-        }
-        if (!classList.contains('out')) {
-          return;
-        }
-        classList.add('selected')
-        selectedCircle = this;
+    d3.selectAll('g.card')
+      .each((x, index, list) => {
+        const card = new Card(this.svg, list[index] as SVGGElement)
+        this.cards.set(card.id, card);
       });
 
+    d3.selectAll('.connect')
+      .each((x, index, list) => {
+        const node = new Node(svg.node(), list[index] as SVGCircleElement);
+        console.log(node.cardId)
+        const card = this.cards.get(node.cardId);
+        card.nodes.set(node.id, node)
+        node.addEventListener('selectNode', (event: Event) => {
+          if (this.selected !== undefined) {
+            this.selected.deselect();
+            this.selected = undefined;
+          }
+          this.selected = node;
+          node.select();
+        })
+      })
+
     const dragHandler = d3.drag()
-      .on("start", dragStartNode)
-      .on("drag", dragDrag);
-    dragHandler(this.svg.selectAll('.move_card'));
-
-
+      .on("start", dragStartCard)
+      .on("drag", dragCard);
+    dragHandler(svg.selectAll('.move_card'));
   }
 
 }

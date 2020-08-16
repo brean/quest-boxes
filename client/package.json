@@ -50,6 +50,8 @@
       "node": true
     },
     "extends": [
+      "standard",
+      "standard-vue",
       "plugin:vue/essential",
       "@vue/typescript/recommended"
     ],
@@ -64,7 +66,10 @@
           "**/tests/unit/**/*.spec.{j,t}s?(x)"
         ],
         "env": {
-          "jest": true
+          "jest": true,
+          "browser": true,
+          "commonjs": true,
+          "es6": true
         }
       }
     ]

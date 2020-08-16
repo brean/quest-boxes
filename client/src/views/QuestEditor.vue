@@ -14,8 +14,9 @@
         </marker>
         <g id="zoom_root">
           <g id="nodes">
-            <g v-for="node in quest.nodes" :key="node.title"
-              v-bind:transform="'translate(' + node.x + ', ' + node.y + ')'"  >
+            <g v-for="node in quest.nodes" :key="node.id" :id="node.id"
+              v-bind:transform="'translate(' + node.x + ', ' + node.y + ')'" 
+              class="card" >
               <foreignObject
                 width="220px" height="400px">
                 <v-card
@@ -54,32 +55,25 @@
                   </v-card-actions>
                 </v-card>
               </foreignObject>
-              <g v-if="node.task == 'multiple_choice'">
                 <circle class="connect out multiple_choice_option"
                   v-for="(answer, index) in node.answers"
                   :key="answer+index"
-                  :id="'connect_out_'+node.id+'_'+index"
+                  :id="'node_out_'+node.id+'_'+index"
                   v-bind:data-node-id="node.id"
                   v-bind:data-answer-index="index"
                   cx="186" v-bind:cy="161 + index * 37" r="12"
                 />
-              </g>
               <circle class="connect out"
-                  v-bind:id="'connect_out_'+node.id"
+                  v-bind:id="'node_out_'+node.id"
                   cx="204" cy="70" r="12"
                 />
               <circle class="connect in"
-                  v-bind:id="'connect_in_'+node.id"
+                  v-bind:id="'node_in_'+node.id"
                   cx="-2" cy="70" r="12"
                 />
             </g>
-            <g id="edges">
-              <path v-for="(edge, index) in quest.edges" 
-                :key="'edge_'+index"
-                :id="'edge_'+index"
-                class="edge"
-               />
-            </g>
+          </g>
+          <g id="edges">
           </g>
         </g>
       </svg>
@@ -154,9 +148,10 @@
     fill: orange;
   }
 
-  .ignore-pointer {
+  path, .ignore-pointer {
     pointer-events: none;
   }
+
 </style>
 <style scoped>
   div#chart {
@@ -230,7 +225,7 @@ export default {
                 id: uuidv4(),
                 title: 'Text',
                 task: 'text_or_image',
-                text: 'Just text.',
+                text: 'That wasn\'t correct.',
                 x: 650,
                 y: 100
               },
@@ -238,21 +233,24 @@ export default {
                 id: uuidv4(),
                 title: 'Text',
                 task: 'text_or_image',
-                text: 'Just text.',
-                x: 600,
-                y: 600
+                text: 'RIGHT ANSWER!🎉',
+                x: 650,
+                y: 400
               }
             ]
             self.quest.edges = [
               {
+                id: uuidv4(),
                 from: self.quest.nodes[0].id,
                 to: self.quest.nodes[1].id
               },
               {
+                id: uuidv4(),
                 from: self.quest.nodes[1].id,
                 to: self.quest.nodes[2].id,
               },
               {
+                id: uuidv4(),
                 from: self.quest.nodes[1].id,
                 to: self.quest.nodes[3].id,
                 answer: 1
